@@ -1,0 +1,182 @@
+---
+title: "PULCCA STATUT EST"
+author:  
+  RAM CO Contact Idrissa DABO/Francis NJILIE
+title-block-banner: "#D7DBDD"
+format: 
+  html:
+    self-contained: true
+    toc: true
+    toc-location: right
+editor: visual
+---
+
+```{r echo=FALSE}
+  htmltools::img(src = knitr::image_uri(file.path("image/WFP-logo.png")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;',width = 200,height = 145)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(haven)
+library(labelled)
+library(echarts4r)
+library(r2resize)
+library(gtsummary)
+# library(skimr)
+# library(gtsummary)
+library(writexl)
+library(DT)
+
+
+
+
+est_data <- read_sav("data.sav")
+
+est_data <- est_data |> to_factor()
+admin1 <- est_data |> group_by(SvyDate,ADMIN2Name) |> count()
+date_collecte <- est_data |> group_by(SvyDate) |> count()
+rownames(date_collecte) <- NULL
+date_collecte <- as.data.frame(date_collecte)
+admin2 <- est_data |> group_by(ADMIN2Name,ADMIN3Name) |> count()
+enqueteur <- est_data |> group_by(ADMIN2Name,EnuName) |> count()
+zone_collecte <- est_data |> group_by(ADMIN1Name,ADMIN2Name,ADMIN3Name,ADMIN4Name) |> count()
+# est_data |> group_by(ADMIN3Name,ADMIN4Name) |> count()
+
+admin2 |> e_chart(x = ADMIN3Name) |> 
+  e_bar(n) |> 
+  e_tooltip()
+  
+enqueteur |> e_chart(x = EnuName) |> 
+  e_bar(n) |> 
+  e_tooltip()
+
+zone_collecte2 <- unique(zone_collecte)
+zone_collecte3 <- zone_collecte2 |>   dplyr::group_by(ADMIN2Name,ADMIN3Name) |> count()
+
+zone_collecte5 <-  tibble::tibble(
+  name = "Est",
+  children = list(
+    tibble::tibble(name = c("Kadey", "Lom-et-Djérem"),children = list(tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[1])])
+), tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[2])])
+)))
+    
+  )
+)
+
+zone_table <- zone_collecte[3:5]
+zone_table <- zone_table |> datatable(rownames = FALSE)
+
+zone_graphe <- zone_collecte5 |> 
+  e_charts() |> 
+  e_tree() |> 
+  e_tooltip()
+
+graph_depart <- admin1 |> group_by(SvyDate) |> 
+  e_charts(ADMIN2Name,timeline = TRUE) |> 
+  e_timeline_opts(autoPlay = TRUE, top = 60) |> 
+  e_bar(n) |> 
+  e_labels(position = 'insideTop') |> 
+  e_legend(show = FALSE) |> 
+  e_tooltip() |> 
+  e_grid(top = 100) |> 
+  e_title("Donnée par départements par Jour", 
+          left = "center", top = 5, 
+          textStyle = list(fontSize = 15))
+
+date_graph <- date_collecte |>
+  e_charts(x = SvyDate) |>
+  e_line(serie = n) |>
+   e_x_axis(type='category') |>
+  e_tooltip() |> 
+  e_legend(show = FALSE) |> 
+  e_labels() |> 
+  e_title("Donnée total par Jour", 
+          left = "center", top = 5, 
+          textStyle = list(fontSize = 15))
+
+
+enqueteur_kadey <- enqueteur |> filter(
+  ADMIN2Name == "Kadey"
+)
+
+enqueteur_lomderem <- enqueteur |> filter(
+  ADMIN2Name == "Lom-et-Djérem"
+)
+
+enq_graphique_kadey <- enqueteur_kadey |> group_by(
+  ADMIN2Name
+) |> e_charts(x = EnuName) |> 
+  e_bar(n) |> 
+  e_labels(position = 'insideTop') |> 
+  e_tooltip() |> 
+  e_legend(show = FALSE) |> 
+   e_title("Donnée Par enquêteur à Kadey", 
+          left = "center", top = 5, 
+          textStyle = list(fontSize = 15)) |> 
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
+  
+
+enq_graphique_lomdjerem <- enqueteur_lomderem |> group_by(
+  ADMIN2Name
+) |> e_charts(x = EnuName) |> 
+  e_bar(n) |> 
+  e_labels(position = 'insideTop') |> 
+  e_legend(show = FALSE) |> 
+  e_title("Donnée Par enquêteur à Lom-et-Djérem", 
+          left = "center", top = 5, 
+          textStyle = list(fontSize = 15)) |> 
+  e_tooltip() |> 
+  e_color("lightblue") |> 
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
+
+superviseur <- est_data |> group_by(
+ EnuSupervisorName,EnuName
+) |> count()
+
+table_superviseur <- superviseur |> datatable(rownames = FALSE)
+```
+
+## Zones administratives Renseignées
+
+Au moment de la dernière mise à jour Les données ont été collectées dans seulement **2 départements** et **5 arrondissments** avec un total de **198 ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté à dans le village de "**Kette**\*, **6 ménages** à ***Gbebana*** et **9 ménages** à ***Mokolo IV*** ? Essayer de discuter les avec les superviseurs pour qu'ils mettent la pression sur les enquêteurs.
+
+```{r echo=FALSE}
+#| echo: false
+#| layout-ncol: 2
+#| layout: [[45,-10, 45], [-10], [45,-10, 45]]
+zone_graphe
+zone_table
+
+```
+
+## Données Total collectées par Jour
+
+Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém. Cependant aucun questionnaire n'a été renseigné aujourd'hui dans le département de Lom-et-Djérém. Le nombre total de questionnaire collecté est passé de 141 à 25 soit une baisse de 82% entre hier et aujourd'hui. **Qu'est-ce qui explique cette baisse ? Est-ce que le quota de l'est atteint ? comment pouvons nous vous aidez pour aller plus vite**
+
+```{r}
+#| echo: false
+#| layout-ncol: 2
+#| layout: [[45,-10, 45], [-10], [45,-10, 45]]
+graph_depart
+date_graph
+
+```
+
+## Résultats Par enquêteurs
+
+
+En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux de Kadey. De plus, certains enquêteurs, comme Djoukouo Chiendjou Natacha, n'ont collecté que 2 questionnaires depuis le début des enquêtes, et c'était hier. Signe Tamba Daniel a collecté 4 questionnaires (2 hier, 2 aujourd'hui). Kamguia Ngoakam Eric était dans la même situation hier que les deux enquêteurs que j'ai mentionnés, mais il s'est amélioré en passant de 2 à 13 questionnaires entre hier et aujourd'hui. Dans le département de Lom-et-Djéréem, le nombre de questionnaires collectés tourne autour de 5 à 7 pour la plupart des enquêteurs. **Veuillez voir avec eux pourquoi ça n'avance pas aussi rapidement**.
+
+```{r echo=FALSE}
+#| layout-ncol: 2
+enq_graphique_kadey
+enq_graphique_lomdjerem
+
+```
+
+```{r echo=FALSE}
+table_superviseur
+```
