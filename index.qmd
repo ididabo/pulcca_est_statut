@@ -144,7 +144,7 @@ zone_table
 
 ```
 
-## Données Total collectés par Jour
+## Données Total collectées par Jour
 
 Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém
 
