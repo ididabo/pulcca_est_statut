@@ -1,13 +1,21 @@
 ---
 title: "PULCCA STATUT EST"
-author: RAM CO Contact Idrissa DABO
+author:  
+  RAM CO Contact Idrissa DABO/Francis NJILIE
+title-block-banner: "#D7DBDD"
 format: 
   html:
     self-contained: true
     toc: true
-    toc-location: left
+    toc-location: right
 editor: visual
 ---
+
+```{r echo=FALSE}
+  htmltools::img(src = knitr::image_uri(file.path("image/WFP-logo.png")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;',width = 200,height = 145)
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -133,7 +141,7 @@ table_superviseur <- superviseur |> datatable(rownames = FALSE)
 
 ## Zones administratives Renseignées
 
-Au moment de la dernière mise à jour Les données ont été collectées dans seulement **2 départements** et **5 arrondissments** avec un total de **173 ménages enquêtés**. Le tableau ci-dessous présente les résultats par villages (ADMIN4Name)
+Au moment de la dernière mise à jour Les données ont été collectées dans seulement **2 départements** et **5 arrondissments** avec un total de **198 ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté à dans le village de "**Kette**\*, **6 ménages** à ***Gbebana*** et **9 ménages** à ***Mokolo IV*** ? Essayer de discuter les avec les superviseurs pour qu'ils mettent la pression sur les enquêteurs.
 
 ```{r echo=FALSE}
 #| echo: false
@@ -146,7 +154,7 @@ zone_table
 
 ## Données Total collectées par Jour
 
-Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém
+Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém. Cependant aucun questionnaire n'a été renseigné aujourd'hui dans le département de Lom-et-Djérém. Le nombre total de questionnaire collecté est passé de 141 à 25 soit une baisse de 82% entre hier et aujourd'hui. **Qu'est-ce qui explique cette baisse ? Est-ce que le quota de l'est atteint ? comment pouvons nous vous aidez pour aller plus vite**
 
 ```{r}
 #| echo: false
@@ -158,7 +166,10 @@ date_graph
 ```
 
 ## Résultats Par enquêteurs
-En Moyenne les enquêteurs de Lom-et-Djerem collectent plus de données par jour comparés aux enquêteurs de Kadey. En plus on note certains enquêteurs tels que (Signe Tamba Daniel,Kamguia Ngoakam Eric et Djoukouo Chiendjou Natacha) avec un taux de collectes très faible avec un total de 2 questionnaires
+
+
+En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux de Kadey. De plus, certains enquêteurs, comme Djoukouo Chiendjou Natacha, n'ont collecté que 2 questionnaires depuis le début des enquêtes, et c'était hier. Signe Tamba Daniel a collecté 4 questionnaires (2 hier, 2 aujourd'hui). Kamguia Ngoakam Eric était dans la même situation hier que les deux enquêteurs que j'ai mentionnés, mais il s'est amélioré en passant de 2 à 13 questionnaires entre hier et aujourd'hui. Dans le département de Lom-et-Djéréem, le nombre de questionnaires collectés tourne autour de 5 à 7 pour la plupart des enquêteurs. **Veuillez voir avec eux pourquoi ça n'avance pas aussi rapidement**.
+
 ```{r echo=FALSE}
 #| layout-ncol: 2
 enq_graphique_kadey
@@ -169,4 +180,3 @@ enq_graphique_lomdjerem
 ```{r echo=FALSE}
 table_superviseur
 ```
-
