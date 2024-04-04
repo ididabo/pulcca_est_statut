@@ -37,8 +37,6 @@ est_data <- read_sav("data.sav")
 
 est_data <- est_data |> to_factor()
 admin1 <- est_data |> group_by(SvyDate,ADMIN2Name) |> count()
-admin1_2 <- est_data |> group_by(ADMIN2Name) |> count()
-
 date_collecte <- est_data |> group_by(SvyDate) |> count()
 rownames(date_collecte) <- NULL
 date_collecte <- as.data.frame(date_collecte)
@@ -61,10 +59,9 @@ zone_collecte3 <- zone_collecte2 |>   dplyr::group_by(ADMIN2Name,ADMIN3Name) |> 
 zone_collecte5 <-  tibble::tibble(
   name = "Est",
   children = list(
-    tibble::tibble(name = unique(zone_collecte$ADMIN2Name),children = list(tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[1])])
+    tibble::tibble(name = c("Kadey", "Lom-et-Djérem"),children = list(tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[1])])
 ), tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[2])])
-),tibble::tibble(name = unique(zone_collecte$ADMIN3Name[which(zone_collecte$ADMIN2Name == unique(zone_collecte$ADMIN2Name)[3])]))
-))
+)))
     
   )
 )
@@ -109,10 +106,6 @@ enqueteur_lomderem <- enqueteur |> filter(
   ADMIN2Name == "Lom-et-Djérem"
 )
 
-enqueteur_boumkangoko <- enqueteur |> filter(
-  ADMIN2Name == "Boumba-et-Ngoko"
-)
-
 enq_graphique_kadey <- enqueteur_kadey |> group_by(
   ADMIN2Name
 ) |> e_charts(x = EnuName) |> 
@@ -139,19 +132,6 @@ enq_graphique_lomdjerem <- enqueteur_lomderem |> group_by(
   e_color("lightblue") |> 
   e_x_axis(axisLabel = list(interval = 0, rotate = 45))
 
-enq_graphique_boumkangoko <- enqueteur_boumkangoko |> group_by(
-  ADMIN2Name
-) |> e_charts(x = EnuName) |> 
-  e_bar(n) |> 
-  e_labels(position = 'insideTop') |> 
-  e_legend(show = FALSE) |> 
-  e_title("Donnée Par enquêteur à Boumka-et-Ngoko", 
-          left = "center", top = 5, 
-          textStyle = list(fontSize = 15)) |> 
-  e_tooltip() |> 
-  e_color("lightblue") |> 
-  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
-
 superviseur <- est_data |> group_by(
  EnuSupervisorName,EnuName
 ) |> count()
@@ -161,7 +141,7 @@ table_superviseur <- superviseur |> datatable(rownames = FALSE)
 
 ## Zones administratives Renseignées
 
-Au moment de la dernière mise à jour Les données ont été collectées dans seulement **3 départements** et **7 arrondissments** avec un total de **488 ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté dans le village de **Zougnue,Gadoet Mborgune**, **2 ménages** à ***La 2*** et **3 ménages** à **Kette**. *Essayer de discuter les avec les superviseurs pour qu'ils mettent la pression sur les enquêteurs.*
+Au moment de la dernière mise à jour Les données ont été collectées dans seulement **2 départements** et **5 arrondissments** avec un total de **198 ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté à dans le village de "**Kette**\*, **6 ménages** à ***Gbebana*** et **9 ménages** à ***Mokolo IV*** ? Essayer de discuter les avec les superviseurs pour qu'ils mettent la pression sur les enquêteurs.
 
 ```{r echo=FALSE}
 #| echo: false
@@ -174,7 +154,7 @@ zone_table
 
 ## Données Total collectées par Jour
 
-Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém. Cependant aucun questionnaire n'a été renseigné aujourd'hui dans le département de Lom-et-Djérém et Boumba-et-Ngoko. Le nombre total de questionnaire collecté est passé de 304 à 10 soit une baisse de 97% entre hier et aujourd'hui. **Qu'est-ce qui explique cette baisse ? Est-ce que le quota de l'est est atteint ? comment pouvons nous vous aidez pour aller plus vite**
+Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém. Cependant aucun questionnaire n'a été renseigné aujourd'hui dans le département de Lom-et-Djérém. Le nombre total de questionnaire collecté est passé de 141 à 25 soit une baisse de 82% entre hier et aujourd'hui. **Qu'est-ce qui explique cette baisse ? Est-ce que le quota de l'est atteint ? comment pouvons nous vous aidez pour aller plus vite**
 
 ```{r}
 #| echo: false
@@ -187,7 +167,8 @@ date_graph
 
 ## Résultats Par enquêteurs
 
-En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux des autres départements. De plus, certains enquêteurs, comme **Tapyon Emmanuel** et **Ondo Ela Claude Leroy** n'ont collecté **qu'un seul questionnaire** depuis le début des enquêtes. **Moamosse Nkal Mistral Brice**,**Patrick Kecheu Njapoum** et **Auxence Augustin Koa** n'ont quant-à eux collecté que 6 questionnaires. **Veuillez voir avec eux pourquoi ça n'avance pas aussi rapidement**
+
+En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux de Kadey. De plus, certains enquêteurs, comme Djoukouo Chiendjou Natacha, n'ont collecté que 2 questionnaires depuis le début des enquêtes, et c'était hier. Signe Tamba Daniel a collecté 4 questionnaires (2 hier, 2 aujourd'hui). Kamguia Ngoakam Eric était dans la même situation hier que les deux enquêteurs que j'ai mentionnés, mais il s'est amélioré en passant de 2 à 13 questionnaires entre hier et aujourd'hui. Dans le département de Lom-et-Djéréem, le nombre de questionnaires collectés tourne autour de 5 à 7 pour la plupart des enquêteurs. **Veuillez voir avec eux pourquoi ça n'avance pas aussi rapidement**.
 
 ```{r echo=FALSE}
 #| layout-ncol: 2
@@ -197,8 +178,5 @@ enq_graphique_lomdjerem
 ```
 
 ```{r echo=FALSE}
-#| layout-ncol: 2
-#| layout: [[45,-10, 45], [-10], [45,-10, 45]]
-enq_graphique_boumkangoko
 table_superviseur
 ```
