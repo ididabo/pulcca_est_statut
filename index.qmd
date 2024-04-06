@@ -1,8 +1,14 @@
 ---
 title: "PULCCA STATUT EST"
 author:  
-  RAM CO Contact Idrissa DABO/Francis NJILIE
+   Idrissa DABO/Francis NJILIE
 title-block-banner: "#D7DBDD"
+date-modified: "04/06/2024 21:19"
+date-format: "MM/D/YYYY, HH:mm"
+lang: fr
+language: 
+  title-block-author-single: "RAM CO Contact"
+  title-block-modified: "Dernière Mise à Jour"
 format: 
   html:
     self-contained: true
@@ -25,20 +31,37 @@ library(labelled)
 library(echarts4r)
 library(r2resize)
 library(gtsummary)
+library(xlsx)
 # library(skimr)
 # library(gtsummary)
 library(writexl)
 library(DT)
 
 
-
+# 
 
 est_data <- read_sav("data.sav")
-
 est_data <- est_data |> to_factor()
+est_data <- est_data |> filter(
+  today >= "2024-04-01"
+)
+quota_data <- read.xlsx("quota_est.xlsx",sheetName = 1)
+quota_depart <- quota_data |> dplyr::group_by(
+  departement
+) |> summarise(nb_questionnaire = sum(Participants.HIMO) )
+
 admin1 <- est_data |> group_by(SvyDate,ADMIN2Name) |> count()
 admin1_2 <- est_data |> group_by(ADMIN2Name) |> count()
+quota_depart <- quota_depart |> left_join(
+  admin1_2, by = c("departement"="ADMIN2Name")
+)
 
+quota_depart <- quota_depart |> rename(
+  nb_atteint = n
+)
+quota_depart <- quota_depart |> mutate(
+  perc_atteint = round(nb_atteint/nb_questionnaire,1)
+)
 date_collecte <- est_data |> group_by(SvyDate) |> count()
 rownames(date_collecte) <- NULL
 date_collecte <- as.data.frame(date_collecte)
@@ -75,7 +98,8 @@ zone_table <- zone_table |> datatable(rownames = FALSE)
 zone_graphe <- zone_collecte5 |> 
   e_charts() |> 
   e_tree() |> 
-  e_tooltip()
+  e_tooltip() |> 
+  e_toolbox_feature("saveAsImage")
 
 graph_depart <- admin1 |> group_by(SvyDate) |> 
   e_charts(ADMIN2Name,timeline = TRUE) |> 
@@ -87,7 +111,8 @@ graph_depart <- admin1 |> group_by(SvyDate) |>
   e_grid(top = 100) |> 
   e_title("Donnée par départements par Jour", 
           left = "center", top = 5, 
-          textStyle = list(fontSize = 15))
+          textStyle = list(fontSize = 15))|> 
+  e_toolbox_feature("saveAsImage")
 
 date_graph <- date_collecte |>
   e_charts(x = SvyDate) |>
@@ -98,7 +123,8 @@ date_graph <- date_collecte |>
   e_labels() |> 
   e_title("Donnée total par Jour", 
           left = "center", top = 5, 
-          textStyle = list(fontSize = 15))
+          textStyle = list(fontSize = 15)) |> 
+  e_toolbox_feature("saveAsImage")
 
 
 enqueteur_kadey <- enqueteur |> filter(
@@ -123,7 +149,8 @@ enq_graphique_kadey <- enqueteur_kadey |> group_by(
    e_title("Donnée Par enquêteur à Kadey", 
           left = "center", top = 5, 
           textStyle = list(fontSize = 15)) |> 
-  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45))|> 
+  e_toolbox_feature("saveAsImage")
   
 
 enq_graphique_lomdjerem <- enqueteur_lomderem |> group_by(
@@ -137,7 +164,8 @@ enq_graphique_lomdjerem <- enqueteur_lomderem |> group_by(
           textStyle = list(fontSize = 15)) |> 
   e_tooltip() |> 
   e_color("lightblue") |> 
-  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45))|> 
+  e_toolbox_feature("saveAsImage")
 
 enq_graphique_boumkangoko <- enqueteur_boumkangoko |> group_by(
   ADMIN2Name
@@ -150,18 +178,49 @@ enq_graphique_boumkangoko <- enqueteur_boumkangoko |> group_by(
           textStyle = list(fontSize = 15)) |> 
   e_tooltip() |> 
   e_color("lightblue") |> 
-  e_x_axis(axisLabel = list(interval = 0, rotate = 45))
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45))|> 
+  e_toolbox_feature("saveAsImage")
 
 superviseur <- est_data |> group_by(
  EnuSupervisorName,EnuName
 ) |> count()
 
 table_superviseur <- superviseur |> datatable(rownames = FALSE)
+liq_boum <- data.frame(val = c(quota_depart$perc_atteint[1],0.5,0.4))
+liq_boum_graph <- liq_boum |> e_charts() |> e_liquid(val) |> e_title("Avancement  Boumka-et-Ngoko", 
+          left = "center", top = 2, 
+          textStyle = list(fontSize = 15))|> 
+  e_toolbox_feature("saveAsImage")
+
+liq_kadey <- data.frame(val = c(quota_depart$perc_atteint[2],0.5,0.4))
+liq_kadey_graph <- liq_kadey |> e_charts() |> e_liquid(val) |> e_title("Avancement Kadey", 
+          left = "center", top = 2, 
+          textStyle = list(fontSize = 15))|> 
+  e_toolbox_feature("saveAsImage")
+
+liq_lomdjerem <- data.frame(val = c(quota_depart$perc_atteint[3],0.5,0.4))
+liq_lomdjerem_graph <- liq_lomdjerem |> e_charts() |> e_liquid(val) |> e_title("Avancement Lom-et-Djérém", 
+          left = "center", top = 2, 
+          textStyle = list(fontSize = 15))|> 
+  e_toolbox_feature("saveAsImage")
+
+```
+
+## Avancement de l'enquête par département
+
+La proportion de questionnaires collectés par rapport à l'objectif fixé est de 30% (84/240) à Boumba-et-Ngoko, 40% (665/1863) à Kadey et de 100% à Lom-et-Djérem.
+
+```{r echo=FALSE}
+#| layout-ncol: 3
+#| layout: [[45,-10, 45], [-10], [45,-10, 45]]
+liq_boum_graph
+liq_kadey_graph
+liq_lomdjerem_graph
 ```
 
 ## Zones administratives Renseignées
 
-Au moment de la dernière mise à jour Les données ont été collectées dans seulement **3 départements** et **7 arrondissments** avec un total de **488 ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté dans le village de **Zougnue,Gadoet Mborgune**, **2 ménages** à ***La 2*** et **3 ménages** à **Kette**. *Essayer de discuter les avec les superviseurs pour qu'ils mettent la pression sur les enquêteurs.*
+Au moment de la dernière mise à jour Les données ont été collectées dans seulement **3 départements** et **7 arrondissments** avec un total de 1492 **ménages enquêtés**. Le tableau ci-dessous présente les résultats par *villages (ADMIN4Name)*. Pourquoi il n'ya qu'un **seul ménage** qui n'a été enquêté dans le village de **Ngoura2 et Mborguen**, **3 ménages** à **Mborguéne** et le village de **Kette en est encore à** **6 ménages** enquêtés . *Essayer de voir un peu ce qui ne fonctionne pas*
 
 ```{r echo=FALSE}
 #| echo: false
@@ -174,7 +233,7 @@ zone_table
 
 ## Données Total collectées par Jour
 
-Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém. Cependant aucun questionnaire n'a été renseigné aujourd'hui dans le département de Lom-et-Djérém et Boumba-et-Ngoko. Le nombre total de questionnaire collecté est passé de 304 à 10 soit une baisse de 97% entre hier et aujourd'hui. **Qu'est-ce qui explique cette baisse ? Est-ce que le quota de l'est est atteint ? comment pouvons nous vous aidez pour aller plus vite**
+Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém suivi de Kadey puis de Boumba-et-Ngoko. Globalement on note une tendance haussière deu nombre de questionnaire collecté par jour malgrè que le nombre total de questionnaires collectés soit faible à kadey et à Boumba-et-Ngoko. **Qu'est-ce qui explique que ces deux zones n'aient pas encore atteint 50% de l'objectif fixé? comment pouvons nous vous aidez pour aller plus vite ?**
 
 ```{r}
 #| echo: false
@@ -187,7 +246,7 @@ date_graph
 
 ## Résultats Par enquêteurs
 
-En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux des autres départements. De plus, certains enquêteurs, comme **Tapyon Emmanuel** et **Ondo Ela Claude Leroy** n'ont collecté **qu'un seul questionnaire** depuis le début des enquêtes. **Moamosse Nkal Mistral Brice**,**Patrick Kecheu Njapoum** et **Auxence Augustin Koa** n'ont quant-à eux collecté que 6 questionnaires. **Veuillez voir avec eux pourquoi ça n'avance pas aussi rapidement**
+En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux des autres départements. De plus, certains enquêteurs, comme **Firina Ndjidda Cédric Djoberti** **Okala Alara Hermine Gaëlle** et **Matchoffo Dajouo Carine Laure** n'ont collecté **qu'un seul questionnaire** depuis le début des enquêtes. **Auxence Augustin Koa**,**Danbouka Melchisedech** et **Nsegue Marcelle Nadege** en sont encore à moins de 10  questionnaires collectés. **Veuillez voir avec eux pourquoi ça n'avance pas**
 
 ```{r echo=FALSE}
 #| layout-ncol: 2
