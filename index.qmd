@@ -233,7 +233,7 @@ zone_table
 
 ## Données Total collectées par Jour
 
-Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém suivi de Kadey puis de Boumba-et-Ngoko. Globalement on note une tendance haussière deu nombre de questionnaire collecté par jour malgrè que le nombre total de questionnaires collectés soit faible à kadey et à Boumba-et-Ngoko. **Qu'est-ce qui explique que ces deux zones n'aient pas encore atteint 50% de l'objectif fixé? comment pouvons nous vous aidez pour aller plus vite ?**
+Les graphiques ci-dessous présente l'état d'avancement de l'enquête avec les résultats détaillés par départements par jour. La collecte avance beaucoup plus vite dans le département de lom-et-Djérém suivi de Kadey puis de Boumba-et-Ngoko. Globalement on observe une tendance à la hausse du nombre de questionnaires collectés par jour, bien que le nombre total de questionnaires collectés soit faible à kadey et à Boumba-et-Ngoko. **Qu'est-ce qui explique que ces deux zones n'aient pas encore atteint 50% de l'objectif fixé? comment pouvons nous vous aidez pour aller plus vite ?**
 
 ```{r}
 #| echo: false
@@ -246,7 +246,7 @@ date_graph
 
 ## Résultats Par enquêteurs
 
-En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux des autres départements. De plus, certains enquêteurs, comme **Firina Ndjidda Cédric Djoberti** **Okala Alara Hermine Gaëlle** et **Matchoffo Dajouo Carine Laure** n'ont collecté **qu'un seul questionnaire** depuis le début des enquêtes. **Auxence Augustin Koa**,**Danbouka Melchisedech** et **Nsegue Marcelle Nadege** en sont encore à moins de 10  questionnaires collectés. **Veuillez voir avec eux pourquoi ça n'avance pas**
+En moyenne, les enquêteurs de Lom-et-Djerem collectent plus de données par jour que ceux des autres départements. De plus, certains enquêteurs, comme **Firina Ndjidda Cédric Djoberti**, **Okala Alara Hermine Gaëlle** et **Matchoffo Dajouo Carine Laure** n'ont collecté **qu'un seul questionnaire** depuis le début des enquêtes. **Auxence Augustin Koa**,**Danbouka Melchisedech** et **Nsegue Marcelle Nadege** en sont encore à moins de 10  questionnaires collectés. **Veuillez voir avec eux pourquoi ça n'avance pas**
 
 ```{r echo=FALSE}
 #| layout-ncol: 2
